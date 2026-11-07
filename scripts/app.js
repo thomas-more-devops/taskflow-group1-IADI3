@@ -1,5 +1,13 @@
 class TaskFlow {
     constructor() {
+        this.categories = [
+            { name: 'Work', icon: '💼', className: 'work' },
+            { name: 'Personal', icon: '🏠', className: 'personal' },
+            { name: 'Shopping', icon: '🛒', className: 'shopping' },
+            { name: 'Health', icon: '❤️', className: 'health' },
+            { name: 'Study', icon: '📚', className: 'study' }
+        ];
+        this.activeCategory = 'all';
         this.tasks = this.loadTasks();
         this.taskIdCounter = this.getNextTaskId();
         this.initializeApp();
@@ -22,6 +30,7 @@ class TaskFlow {
     bindEvents() {
         const addTaskBtn = document.getElementById('addTaskBtn');
         const taskInput = document.getElementById('taskInput');
+        const categoryFilters = document.getElementById('categoryFilters');
 
         addTaskBtn.addEventListener('click', () => this.addTask());
         
@@ -31,6 +40,16 @@ class TaskFlow {
             }
         });
 
+        categoryFilters.addEventListener('click', (event) => {
+            const filterButton = event.target.closest('[data-category-filter]');
+            if (!filterButton) {
+                return;
+            }
+
+            this.activeCategory = filterButton.dataset.categoryFilter;
+            this.renderTasks();
+        });
+
         // Focus on input when page loads
         taskInput.focus();
     }
@@ -38,6 +57,7 @@ class TaskFlow {
     addTask() {
         const taskInput = document.getElementById('taskInput');
         const taskText = taskInput.value.trim();
+        const category = this.getCategory(document.getElementById('taskCategory').value);
 
         if (taskText === '') {
             this.showNotification('Please enter a task description', 'warning');
@@ -48,12 +68,14 @@ class TaskFlow {
         const newTask = {
             id: this.taskIdCounter++,
             text: taskText,
+            category,
             completed: false,
             createdAt: new Date().toISOString(),
             completedAt: null
         };
 
         this.tasks.push(newTask);
+        this.activeCategory = 'all';
         this.saveTasks();
         this.renderTasks();
         this.updateStats();
@@ -104,10 +126,26 @@ class TaskFlow {
     renderTasks() {
         const tasksList = document.getElementById('tasksList');
         const emptyState = document.getElementById('emptyState');
+        const emptyStateTitle = document.getElementById('emptyStateTitle');
+        const emptyStateMessage = document.getElementById('emptyStateMessage');
+        const visibleTasks = this.tasks.filter(task =>
+            this.activeCategory === 'all' || task.category === this.activeCategory
+        );
 
-        if (this.tasks.length === 0) {
+        document.querySelectorAll('[data-category-filter]').forEach(button => {
+            const isActive = button.dataset.categoryFilter === this.activeCategory;
+            button.classList.toggle('active', isActive);
+            button.setAttribute('aria-pressed', isActive);
+        });
+
+        if (visibleTasks.length === 0) {
             tasksList.style.display = 'none';
             emptyState.style.display = 'block';
+            const hasTasks = this.tasks.length > 0;
+            emptyStateTitle.textContent = hasTasks ? 'No matching tasks' : 'No tasks yet';
+            emptyStateMessage.textContent = hasTasks
+                ? `There are no tasks in the ${this.activeCategory} category.`
+                : 'Add your first task above to get started!';
             return;
         }
 
@@ -115,7 +153,7 @@ class TaskFlow {
         emptyState.style.display = 'none';
 
         // Sort tasks: incomplete first, then by creation date
-        const sortedTasks = [...this.tasks].sort((a, b) => {
+        const sortedTasks = [...visibleTasks].sort((a, b) => {
             if (a.completed !== b.completed) {
                 return a.completed - b.completed;
             }
@@ -129,6 +167,9 @@ class TaskFlow {
                          onclick="taskFlow.toggleTask(${task.id})">
                     </div>
                     <span class="task-text">${this.escapeHtml(task.text)}</span>
+                    <span class="category-badge category-${this.getCategoryDetails(task.category).className}">
+                        ${this.getCategoryDetails(task.category).icon} ${this.getCategoryDetails(task.category).name}
+                    </span>
                 </div>
                 <div class="task-actions">
                     <button class="task-btn edit-btn" onclick="taskFlow.editTask(${task.id})" title="Edit task">
@@ -150,6 +191,15 @@ class TaskFlow {
         document.getElementById('totalTasks').textContent = totalTasks;
         document.getElementById('completedTasks').textContent = completedTasks;
         document.getElementById('pendingTasks').textContent = pendingTasks;
+        document.getElementById('categoryStats').innerHTML = this.categories.map(category => {
+            const categoryCount = this.tasks.filter(task => task.category === category.name).length;
+            return `
+                <span class="category-stat">
+                    <span class="category-badge category-${category.className}">${category.icon} ${category.name}</span>
+                    <strong>${categoryCount}</strong>
+                </span>
+            `;
+        }).join('');
         
         // Update task count in header
         const taskCount = document.getElementById('taskCount');
@@ -169,11 +219,26 @@ class TaskFlow {
     loadTasks() {
         try {
             const saved = localStorage.getItem('taskflow_tasks');
-            return saved ? JSON.parse(saved) : [];
+            return saved
+                ? JSON.parse(saved).map(task => ({
+                    ...task,
+                    category: this.getCategory(task.category)
+                }))
+                : [];
         } catch (error) {
             console.error('Failed to load tasks:', error);
             return [];
         }
+    }
+
+    getCategory(categoryName) {
+        const category = this.categories.find(item => item.name === categoryName);
+        return category ? category.name : 'Personal';
+    }
+
+    getCategoryDetails(categoryName) {
+        const category = this.categories.find(item => item.name === categoryName);
+        return category || this.categories.find(item => item.name === 'Personal');
     }
 
     getNextTaskId() {

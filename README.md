@@ -29,6 +29,8 @@ This project is part of the **Bachelor International Business Management - Data 
 - ✅ **Mark Complete**: Check off completed tasks with satisfying animations
 - ✅ **Edit Tasks**: Modify task descriptions inline
 - ✅ **Delete Tasks**: Remove tasks you no longer need
+- ✅ **Task Categories**: Organize tasks into Work, Personal, Shopping, Health, and Study
+- ✅ **Category Filtering**: Filter the task list and view a category breakdown
 - ✅ **Persistent Storage**: Tasks are saved locally in your browser
 - ✅ **Task Statistics**: View your productivity metrics
 - ✅ **Responsive Design**: Works beautifully on desktop, tablet, and mobile
@@ -70,11 +72,15 @@ No build process, no dependencies, no setup required - just open and use!
 - **Edit**: Click the edit icon (✏️) to modify the task text
 - **Delete**: Click the delete icon (🗑️) to remove the task
 
+### Organizing Tasks
+Choose a category when adding a task, then use the category buttons above the task list to filter tasks. The statistics section includes a count for each category.
+
 ### Viewing Statistics
 The stats section shows:
 - **Total Tasks**: All tasks you've created
 - **Completed**: Tasks you've finished
 - **Pending**: Tasks still to be done
+- **Tasks by Category**: A count for each task category
 
 ## 💡 Learning Outcomes
 
