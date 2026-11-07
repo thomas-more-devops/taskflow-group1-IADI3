@@ -24,6 +24,20 @@ TaskFlow is a modern, responsive task management application built with vanilla 
 3. Task appears immediately in the list below
 4. Input field clears automatically for next task
 
+### 🗂️ Task Categories
+
+- **Five Categories**: Work, Personal, Shopping, Health, and Study
+- **Category Badges**: Each task displays its category with a distinct color and icon
+- **Category Filtering**: Show all tasks or filter the list to one category
+- **Category Statistics**: See a count of tasks in each category
+- **Legacy Task Support**: Tasks saved before categories were added are assigned to Personal
+
+**How to Use**:
+
+1. Select a category when creating a task
+2. Use the category buttons above the task list to filter tasks
+3. Select "All" to return to the complete task list
+
 ### ✅ Task Completion
 
 - **Toggle Completion**: Click checkbox to mark complete/incomplete

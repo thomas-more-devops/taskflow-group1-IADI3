@@ -31,6 +31,14 @@
             <div class="task-input-section">
                 <div class="input-container">
                     <input type="text" id="taskInput" placeholder="What needs to be done?" class="task-input">
+                    <label class="sr-only" for="taskCategory">Task category</label>
+                    <select id="taskCategory" class="category-select">
+                        <option value="Work">Work</option>
+                        <option value="Personal" selected>Personal</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Health">Health</option>
+                        <option value="Study">Study</option>
+                    </select>
                     <button id="addTaskBtn" class="add-btn">
                         <span class="add-icon">+</span>
                         Add Task
@@ -45,6 +53,14 @@
                     <!-- Task count is updated by JavaScript -->
                     <span id="taskCount" class="task-count">0 tasks</span>
                 </div>
+                <div id="categoryFilters" class="category-filters" role="group" aria-label="Filter tasks by category">
+                    <button class="category-filter active" type="button" data-category-filter="all" aria-pressed="true">All</button>
+                    <button class="category-filter" type="button" data-category-filter="Work" aria-pressed="false">Work</button>
+                    <button class="category-filter" type="button" data-category-filter="Personal" aria-pressed="false">Personal</button>
+                    <button class="category-filter" type="button" data-category-filter="Shopping" aria-pressed="false">Shopping</button>
+                    <button class="category-filter" type="button" data-category-filter="Health" aria-pressed="false">Health</button>
+                    <button class="category-filter" type="button" data-category-filter="Study" aria-pressed="false">Study</button>
+                </div>
 
                 <!-- Tasks will be dynamically added here -->
                 <div id="tasksList" class="tasks-list">
@@ -54,8 +70,8 @@
                 <!-- Message displayed when the task list is empty -->
                 <div id="emptyState" class="empty-state">
                     <div class="empty-icon">✨</div>
-                    <h3>No tasks yet</h3>
-                    <p>Add your first task above to get started!</p>
+                    <h3 id="emptyStateTitle">No tasks yet</h3>
+                    <p id="emptyStateMessage">Add your first task above to get started!</p>
                 </div>
             </div>
 
@@ -73,6 +89,10 @@
                     <div class="stat-card">
                         <span class="stat-number" id="pendingTasks">0</span>
                         <span class="stat-label">Pending</span>
+                    </div>
+                    <div class="stat-card category-breakdown-card">
+                        <span class="stat-label">Tasks by Category</span>
+                        <div id="categoryStats" class="category-stat-list"></div>
                     </div>
                 </div>
             </div>
