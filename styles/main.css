@@ -1,18 +1,4 @@
-/* ==========================================================================
-   Design overview
-   - Look: soft "cards" (translucent white, rounded corners, gentle shadows)
-     floating on a purple gradient background.
-   - Palette: indigo/purple (#667eea -> #764ba2) as the brand accent; the
-     neutral greys come from the Tailwind-style slate scale (#f8fafc ... #2d3748)
-     so text and borders stay consistent. Green = done, blue = edit, red = delete.
-   - Layout: one centered column, flexbox for rows, grid only for the stats.
-   - Units: rem for spacing/type so everything scales with the user's browser
-     font-size setting.
-   ========================================================================== */
-
 /* Reset and Base Styles */
-/* Remove browser default spacing so every margin/padding below is intentional.
-   border-box makes width include padding + border, which keeps sizing predictable. */
 * {
     margin: 0;
     padding: 0;
@@ -20,21 +6,14 @@
 }
 
 body {
-    /* Inter first for a clean modern look; the rest is a system-font fallback
-       stack so the app still looks native if Inter isn't loaded. */
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    /* Diagonal gradient is the brand identity; reused on the Add button. */
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    /* 1.6 line-height keeps body text comfortable to read. */
     line-height: 1.6;
     color: #333;
 }
 
 /* Container */
-/* Centered column. 800px is a comfortable line length for a list app; wider
-   would leave tasks stretched across the screen. Flex column + min-height lets
-   .main grow so the footer sits at the bottom on short pages. */
 .container {
     max-width: 800px;
     margin: 0 auto;
@@ -50,9 +29,6 @@ body {
     margin-bottom: 3rem;
 }
 
-/* Card style used throughout: 95% white lets a hint of the gradient through
-   ("frosted glass"), blur softens it, and a large faint shadow lifts it.
-   The header gets the largest radius/shadow because it is the top-level card. */
 .header-content {
     background: rgba(255, 255, 255, 0.95);
     padding: 2rem;
@@ -61,7 +37,6 @@ body {
     backdrop-filter: blur(10px);
 }
 
-/* Flex lets the emoji icon and title text center together with a consistent gap. */
 .app-title {
     font-size: 2.5rem;
     font-weight: 700;
@@ -77,7 +52,6 @@ body {
     font-size: 2.5rem;
 }
 
-/* Lighter grey and weight than the title to create a clear visual hierarchy. */
 .app-subtitle {
     font-size: 1.1rem;
     color: #718096;
@@ -85,7 +59,6 @@ body {
 }
 
 /* Main Content */
-/* flex: 1 absorbs leftover height, pushing the footer down. */
 .main {
     flex: 1;
 }
@@ -95,8 +68,6 @@ body {
     margin-bottom: 2rem;
 }
 
-/* Input and button share one row; align-items centers them vertically.
-   Smaller radius/shadow than the header: secondary cards sit lower in the hierarchy. */
 .input-container {
     background: rgba(255, 255, 255, 0.95);
     padding: 1.5rem;
@@ -107,10 +78,50 @@ body {
     align-items: center;
 }
 
-/* flex: 1 makes the input take all space the button doesn't need.
-   font-family: inherit because form controls don't inherit fonts by default.
-   Generous padding and 1rem text give a large, easy tap target (and stop iOS
-   Safari from zooming in on focus, which happens below 16px). */
+.input-options {
+    display: grid;
+    grid-template-columns: auto;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.date-input-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f8fafc;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.date-input-container:focus-within {
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.date-label {
+    font-size: 0.9rem;
+    color: #4a5568;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.date-input {
+    border: none;
+    background: transparent;
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: #4a5568;
+    cursor: pointer;
+}
+
+.date-input:focus {
+    outline: none;
+}
+
 .task-input {
     flex: 1;
     border: 2px solid #e2e8f0;
@@ -122,8 +133,6 @@ body {
     background: #f8fafc;
 }
 
-/* The default outline is removed but replaced with an accent border and a soft
-   glow ring, so keyboard focus stays clearly visible (accessibility). */
 .task-input:focus {
     outline: none;
     border-color: #667eea;
@@ -135,8 +144,6 @@ body {
     color: #a0aec0;
 }
 
-/* Primary action: the only gradient-filled button, reusing the page gradient so
-   it stands out as the main call to action. nowrap keeps the label on one line. */
 .add-btn {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -153,9 +160,6 @@ body {
     white-space: nowrap;
 }
 
-/* Lift on hover, settle back on press: simulates a physical button. transform
-   is used (not margin/top) because it is GPU-accelerated and doesn't cause
-   layout reflow. */
 .add-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
@@ -170,6 +174,60 @@ body {
     font-weight: bold;
 }
 
+/* Due Date Filter Section */
+.due-date-filters {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.due-date-filters h3 {
+    margin-bottom: 1rem;
+    color: #2d3748;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.due-date-filter-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+}
+
+.due-date-filter-btn {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    color: #4a5568;
+}
+
+.due-date-filter-btn:hover {
+    background: #e2e8f0;
+    transform: translateY(-1px);
+}
+
+.due-date-filter-btn.active {
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.filter-icon {
+    font-size: 1rem;
+}
+
 /* Tasks Section */
 .tasks-section {
     background: rgba(255, 255, 255, 0.95);
@@ -179,8 +237,6 @@ body {
     margin-bottom: 2rem;
 }
 
-/* Title on the left, count badge on the right; a light divider separates the
-   header from the list without adding visual weight. */
 .tasks-header {
     display: flex;
     justify-content: space-between;
@@ -196,8 +252,6 @@ body {
     color: #2d3748;
 }
 
-/* Pill-shaped badge (large radius) in neutral grey so it informs without
-   competing with the accent colors. */
 .task-count {
     background: #e2e8f0;
     color: #4a5568;
@@ -207,15 +261,12 @@ body {
     font-weight: 500;
 }
 
-/* Flex column with gap spaces items evenly, with no margin hacks on the first/last item. */
 .tasks-list {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
 }
 
-/* Each task is a mini-card: lighter than its parent card so it reads as nested.
-   The whole row is clickable (cursor: pointer), so hover feedback is important. */
 .task-item {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
@@ -228,20 +279,61 @@ body {
     cursor: pointer;
 }
 
-/* A small nudge to the right (rather than a lift) suggests "open this item"
-   and avoids overlapping neighbouring rows. */
 .task-item:hover {
     transform: translateX(4px);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     border-color: #cbd5e0;
 }
 
-/* Completed state: green tint = success, plus reduced opacity so finished work
-   fades into the background and open tasks draw the eye. */
 .task-item.completed {
     background: #f0fff4;
     border-color: #9ae6b4;
     opacity: 0.8;
+}
+
+.task-item.overdue {
+    border-left: 4px solid #e53e3e;
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    animation: pulse-warning 2s infinite;
+}
+
+.task-item.due-today {
+    border-left: 4px solid #ed8936;
+    background: linear-gradient(135deg, #fffaf0 0%, #feebc8 100%);
+}
+
+@keyframes pulse-warning {
+    0%, 100% { box-shadow: 0 4px 15px rgba(229, 62, 62, 0.2); }
+    50% { box-shadow: 0 4px 15px rgba(229, 62, 62, 0.4); }
+}
+
+.due-date-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.due-date-badge.due-today {
+    background: #ed8936;
+    color: white;
+}
+
+.due-date-badge.overdue {
+    background: #e53e3e;
+    color: white;
+    animation: pulse-badge 1.5s infinite;
+}
+
+@keyframes pulse-badge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
 }
 
 .task-content {
@@ -251,8 +343,6 @@ body {
     flex: 1;
 }
 
-/* Custom checkbox built from a div instead of <input type="checkbox"> so it can
-   match the app's rounded style. position: relative anchors the checkmark. */
 .task-checkbox {
     width: 20px;
     height: 20px;
@@ -268,8 +358,6 @@ body {
     border-color: #48bb78;
 }
 
-/* The checkmark is a pseudo-element, so no extra HTML is needed. The
-   top/left 50% + translate(-50%, -50%) trick centers it exactly. */
 .task-checkbox.checked::after {
     content: '✓';
     color: white;
@@ -287,8 +375,6 @@ body {
     transition: all 0.3s ease;
 }
 
-/* Strike-through + muted grey is a widely understood "done" signal that doesn't
-   rely on color alone (helps color-blind users). */
 .task-item.completed .task-text {
     text-decoration: line-through;
     color: #718096;
@@ -299,8 +385,6 @@ body {
     gap: 0.5rem;
 }
 
-/* Icon-only buttons: no background or border until hover keeps rows clean.
-   Color carries meaning: blue = edit (neutral), red = delete (destructive). */
 .task-btn {
     background: none;
     border: none;
@@ -328,8 +412,6 @@ body {
 }
 
 /* Empty State */
-/* Shown when there are no tasks: muted, centered and roomy so the blank list
-   feels intentional and guides the user to add a first task. */
 .empty-state {
     text-align: center;
     padding: 3rem 2rem;
@@ -355,13 +437,11 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* Grid is the right tool for equal-sized cards. auto-fit + minmax(150px, 1fr)
-   makes the number of columns adapt to the width without media queries
-   (the 480px query below only forces a single column on tiny screens). */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 1rem;
+    margin-bottom: 2rem;
 }
 
 .stat-card {
@@ -372,8 +452,15 @@ body {
     border: 1px solid #e2e8f0;
 }
 
-/* Big bold number, small muted label: the number is what people scan for.
-   display: block puts the label on its own line beneath it. */
+.stat-card.overdue-stats {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border-color: #feb2b2;
+}
+
+.overdue-stats .stat-number {
+    color: #e53e3e;
+}
+
 .stat-number {
     display: block;
     font-size: 2rem;
@@ -388,9 +475,45 @@ body {
     font-weight: 500;
 }
 
+.detailed-analytics {
+    border-top: 2px solid #f1f5f9;
+    padding-top: 1.5rem;
+}
+
+.analytics-section h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.due-date-stats-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.stat-icon {
+    font-size: 1.2rem;
+}
+
+.stat-text {
+    font-size: 0.9rem;
+    color: #4a5568;
+    font-weight: 500;
+}
+
 /* Footer */
-/* Sits directly on the gradient (no card), so it uses translucent white text
-   to stay readable but unobtrusive. */
 .footer {
     text-align: center;
     margin-top: 2rem;
@@ -400,57 +523,83 @@ body {
 }
 
 /* Responsive Design */
-/* Desktop-first: the base styles target large screens and these queries scale
-   down. Tablet (<=768px): tighten padding and stack horizontal rows (input +
-   button, tasks header) so nothing gets cramped. */
 @media (max-width: 768px) {
     .container {
         padding: 1rem 0.5rem;
     }
-    
+
     .app-title {
         font-size: 2rem;
     }
-    
+
     .input-container {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
+    .input-options {
+        grid-template-columns: 1fr;
+        order: -1;
+    }
+
     .add-btn {
         justify-content: center;
     }
-    
+
     .task-item {
         padding: 1rem;
     }
-    
+
     .tasks-header {
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start;
     }
+
+    .due-date-filter-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .due-date-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
 }
 
-/* Phone (<=480px): single-column stats and a smaller title and header padding
-   so the title doesn't wrap awkwardly. */
 @media (max-width: 480px) {
     .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .app-title {
         font-size: 1.75rem;
     }
-    
+
     .header-content {
         padding: 1.5rem;
+    }
+
+    .task-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .due-date-badge {
+        margin-left: 0;
+        align-self: flex-start;
+    }
+
+    .due-date-filter-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .due-date-stats-list {
+        grid-template-columns: 1fr;
     }
 }
 
 /* Animation Classes */
-/* Short (0.3s) fade + 20px rise: new tasks visibly "arrive" without slowing the
-   user down. Animates only opacity/transform for smooth performance. */
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -460,12 +609,6 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.task-item {
-    animation: slideIn 0.3s ease;
-}
-
 }
 
 .task-item {
